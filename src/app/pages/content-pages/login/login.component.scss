@@ -1,0 +1,30 @@
+.title-blue {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #005c8b !important;
+}
+
+.ng-select ::ng-deep {
+    border-color: #005c8b;
+    box-shadow: none;
+    align-content: center;
+    font-size: 1rempx !important;
+
+
+    .ng-select-container {
+        min-height: 0px;
+        border-color: #005c8b;
+        color: #005c8b;
+
+        .ng-value-container {
+            padding-top: 6px;
+            padding-bottom: 6px;
+
+            .ng-placeholder {
+                color: #005c8b !important;
+            }
+        }
+    }
+}
+  

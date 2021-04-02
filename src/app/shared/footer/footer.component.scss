@@ -1,0 +1,10 @@
+footer {
+  color: #7d7d7d;
+  position: relative;
+  bottom: 0;
+
+  @media screen and (min-width: 769px) {
+    margin-left: 300px;
+    margin-bottom: 4.5rem;
+  }
+}

@@ -1,0 +1,3 @@
+<ng-container [ngSwitch]="isMultipleProfiles">
+  <alter-profile [profile]="profile" [loading]="loading" *ngSwitchCase="true"></alter-profile>
+</ng-container>

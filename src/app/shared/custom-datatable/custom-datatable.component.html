@@ -1,0 +1,204 @@
+<div class="row">
+    <div class="col-sm-12 float-right">
+        <ng-select class="select-results float-right m-1" [items]="pageLengthOptions" placeholder="Mostrar"
+            bindLabel="label" bindValue="value" [(ngModel)]="pageLength" (ngModelChange)="onChangePageLength()"
+            [clearable]="false" notFoundText="Nenhum item encontrado" [selectOnTab]="true">
+        </ng-select>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered table-layout d-none d-lg-table">
+    <thead>
+        <tr>
+            <ng-container *ngFor="let column of columns">
+                <th *ngIf="!column.hidden"
+                    [ngClass]="{'text-center': column.type === 'actionButtons' || column.type === 'checkbox' || column.type === 'toggle', 'c-pointer': column.canSort}"
+                    [width]="column.width" (click)="onSortChanged(column)">{{column.name}}
+                    <i *ngIf="column.sortBy && column.sortBy.direction === 'asc'" class="ft-arrow-down"></i>
+                    <i *ngIf="column.sortBy && column.sortBy.direction === 'desc'" class="ft-arrow-up"></i>
+                </th>
+            </ng-container>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of currentPageValues" (click)="onClick(item)">
+            <ng-container *ngFor="let column of columns">
+                <td *ngIf="!column.hidden"
+                    [ngClass]="{'text-center': column.type === 'checkbox' || column.type === 'toggle'}">
+                    <ng-container *ngIf="!column.hiddenValue || !column.hiddenValue(item)">
+                        <a class="link-navigate" *ngIf="column.link; else commonTemplate"
+                            (click)="navigation(column.route, column.routeProp, item)">
+                            <span *ngIf="(!column.type || column.type == text) && !column.pipe">{{resolve(item,
+                                column.prop, item)}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'currency'">{{item[column.prop]
+                                | currency: 'BRL'}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'date'">{{item[column.prop]
+                                | date: column.format}}</span>
+                            <span *ngIf="column.type === 'enum'">{{getEnumValue(column, item)}}</span>
+                            <span *ngIf="column.type === 'percentage'">{{resolve(item, column.prop)}} %</span>
+                            <div *ngIf="column.type === 'checkbox' && item[column.prop]" class="text-center">
+                                <i class="ft-check-circle"></i>
+                            </div>
+                            <div *ngIf="column.type === 'toggle'" class="text-center form-check mt-0 togglebutton">
+                                <label>
+                                    <input *ngIf="column.equalsTo" type="checkbox" value=""
+                                        [checked]="item[column.prop] == column.equalsTo"
+                                        [disabled]="column.disabled(item)" (change)="column.change(item)">
+                                    <input *ngIf="!column.equalsTo" type="checkbox" value=""
+                                        [(ngModel)]="item[column.prop]" [checked]="item[column.prop]"
+                                        (change)="column.change(item)">
+                                    <span class="toggle"></span>
+                                </label>
+                            </div>
+                            <img *ngIf="column.type === 'img'" [src]="item[column.prop]"
+                                style="height: 32px; width:32px" />
+                        </a>
+                        <ng-template #commonTemplate>
+                            <span *ngIf="(!column.type || column.type == text) && !column.pipe">
+                                {{resolve(item, column.prop)}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'titlecase'">
+                                {{resolve(item, column.prop) | titlecase}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'lowercase'">
+                                {{resolve(item, column.prop) | lowercase}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'cpf'">
+                                {{resolve(item, column.prop) |  mask: '000.000.000-00'}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'currency'">
+                                {{item[column.prop] | currency: 'BRL'}}</span>
+                            <span *ngIf="(!column.type || column.type == text) && column.pipe == 'date'">
+                                {{item[column.prop] | date: column.format}}</span>
+                            <span *ngIf="column.type === 'enum'">{{getEnumValue(column, item)}}</span>
+                            <span *ngIf="column.type === 'percentage'">{{resolve(item, column.prop)}} %</span>
+                            <div *ngIf="column.type === 'checkbox' && item[column.prop]" class="text-center">
+                                <i class="ft-check"></i>
+                            </div>
+                            <div *ngIf="column.type === 'toggle'" class="form-check mt-0 togglebutton">
+                                <label>
+                                    <input *ngIf="column.equalsTo" type="checkbox" value=""
+                                        [checked]="item[column.prop] == column.equalsTo"
+                                        [disabled]="column.disabled(item)" (change)="column.change(item)">
+                                    <input *ngIf="!column.equalsTo" type="checkbox" value=""
+                                        [(ngModel)]="item[column.prop]" [checked]="item[column.prop]"
+                                        (change)="column.change(item)">
+                                    <span class="toggle"></span>
+                                </label>
+                            </div>
+                            <img *ngIf="column.type === 'img'" [src]="item[column.prop]"
+                                style="height: 32px; width:32px" />
+                            <div class="text-center td-actions">
+                                <a *ngFor="let button of column.buttons"
+                                    [hidden]="button.propCheck? !button.check(item[button.propCheck]) : !button.check(item)"
+                                    class="{{button.color}}" (click)="button.click(item)">
+                                    <i class="{{button.icon}}"></i>
+                                </a>
+                            </div>
+                        </ng-template>
+                    </ng-container>
+                </td>
+            </ng-container>
+        </tr>
+        <tr *ngIf="showTotais">
+            <td><strong>Total</strong></td>
+            <td *ngFor="let total of totais">
+                <strong>{{total}} </strong>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="card d-block d-lg-none table-mobile" *ngFor="let item of currentPageValues">
+    <div class="card-body" (click)="navigationMobile(item)">
+        <ng-template ngFor let-column [ngForOf]="columns">
+            <div *ngIf="!column.hidden">
+                <ng-container *ngIf="!column.hiddenValue || !column.hiddenValue(item)">
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && !column.pipe">
+                        <span style="font-weight: bold">{{column.name}}:</span><br [hidden]="!column.large">
+                        {{item[column.prop]}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'number'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        {{item[column.prop]}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'currency'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        {{item[column.prop] | currency: 'BRL'}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'date'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        {{item[column.prop] | date: column.format}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'titlecase'">
+                        <span style="font-weight: bold">{{column.name}}:</span><br [hidden]="!column.large">
+                        {{item[column.prop] | titlecase}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'lowercase'">
+                        <span style="font-weight: bold">{{column.name}}:</span><br [hidden]="!column.large">
+                        {{item[column.prop] | lowercase}}</p>
+                    <p *ngIf="(!column.type || column.type == text) && !column.childProp && column.pipe == 'cpf'">
+                        <span style="font-weight: bold">{{column.name}}:</span><br [hidden]="!column.large">
+                        {{item[column.prop] | mask: '000.000.000-00'}}</p>
+                    <p *ngIf="column.type === 'percentage'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        {{resolve(item, column.prop)}} %</p>
+                    <p *ngIf="column.type === 'enum'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        {{getEnumValue(column, item)}}</p>
+                    <img *ngIf="column.type === 'img'" [src]="item[column.prop]" style="height: 32px; width:32px" />
+                    <div *ngIf="column.type === 'toggle'" class="form-check mt-0 togglebutton">
+                        <span style="font-weight: bold; color: #333333;">{{column.name}}:</span>
+                        <label>
+                            <input *ngIf="column.equalsTo" type="checkbox" value=""
+                                [checked]="item[column.prop] == column.equalsTo" [disabled]="column.disabled(item)"
+                                (change)="column.change(item)" />
+                            <input *ngIf="!column.equalsTo" type="checkbox" value="" [(ngModel)]="item[column.prop]"
+                                [checked]="item[column.prop]" (change)="column.change(item)">
+                            <span class="toggle"></span>
+                        </label>
+                    </div>
+
+                    <p *ngIf="column.type === 'checkbox'">
+                        <span style="font-weight: bold">{{column.name}}:
+
+                            <i *ngIf="item[column.prop] === true" class="ft-check"></i>
+                        </span>
+                    </p>
+
+                    <p *ngIf="column.type === 'actionButtons'">
+                        <span style="font-weight: bold">{{column.name}}:</span>
+                        <button *ngFor="let button of column.buttons"
+                            [hidden]="button.propCheck? !button.check(item[button.propCheck]) : !button.check(item)"
+                            class="btn btn-link btn-{{button.color}}" (click)="button.click(item)">
+                            <i class="{{button.icon}}" style="line-height: 0.5"></i>
+                        </button>
+                    </p>
+                </ng-container>
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-5 text-lg-left text-center">
+        <span class="text-uppercase">Página {{currentPage}} de {{pageCount}}</span>
+    </div>
+    <div class="col-lg-7" [ngClass]="{'text-center': isMobile}">
+        <div class="dataTables-paginate" [ngClass]="{'pull-right': !isMobile}">
+            <ul class="pagination">
+                <li class="paginate-button" (click)="firstPage()">
+                    <a class="c-pointer" *ngIf="!isMobile">Primeira</a>
+                    <a *ngIf="isMobile"><i class="ft-chevrons-left"></i></a>
+                </li>
+                <li class="paginate-button" (click)="previousPage()">
+                    <a class="c-pointer" *ngIf="!isMobile">Anterior</a>
+                    <a *ngIf="isMobile"><i class="ft-chevron-left"></i></a>
+                </li>
+                <li *ngFor="let pageNumber of pagesToShow" class="paginate-button"
+                    [ngClass]="{'active': pageNumber === currentPage}" (click)="onChangeCurrentPage(pageNumber)">
+                    <a class="c-pointer">{{pageNumber}}</a>
+                </li>
+                <li class="paginate-button" (click)="nextPage()">
+                    <a class="c-pointer" *ngIf="!isMobile">Próxima</a>
+                    <a *ngIf="isMobile"><i class="ft-chevron-right"></i></a>
+                </li>
+                <li class="paginate-button" (click)="lastPage()">
+                    <a class="c-pointer" *ngIf="!isMobile">Última</a>
+                    <a *ngIf="isMobile"><i class="ft-chevrons-right"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

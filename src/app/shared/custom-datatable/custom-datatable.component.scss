@@ -1,0 +1,77 @@
+.table-mobile {
+    p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    }
+    .btn {
+        padding: 0px 20px;
+        margin: 0;
+    }
+}
+
+.pagination .paginate-button a {
+    position: relative;
+    display: block;
+}
+
+.pagination {
+    display: inline-flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: .25rem;
+}
+
+.pagination .paginate-button a, .pagination>.page-item>.page-link.mat-button, .pagination>.page-item>span {
+    border: 0;
+    border-radius: 30px!important;
+    transition: .3s;
+    padding: 0 11px;
+    margin: 0 3px;
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
+    color: #999;
+    font-size: 12px;
+    background: 0 0;
+    text-align: center;
+}
+
+.pagination .paginate-button.active a{
+    background-color:#666 ;
+    border-color: #eeca3b;
+    color:#b0bec5;
+    box-shadow: 0 4px 5px 0 rgba(58,30,67,.14), 0 1px 10px 0 rgba(58,30,67,.12), 0 2px 4px -1px rgba(58,30,67,.2);
+}
+
+div.dataTables-paginate {
+    margin: 0;
+    white-space: nowrap;
+    //float: right;
+}
+.table {table-layout: fixed};
+
+.table thead tr th{
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ng-value-container{
+    border:0;
+}
+
+.ng-select.select-results{
+    margin-top:-27px;
+}
+
+.ng-select.select-results ::ng-deep .ng-select-container{
+}
+
+.link-navigate{
+    color: #4caf50 !important;
+    cursor: pointer;
+}
+
+.text-center{
+    cursor: pointer;
+}
